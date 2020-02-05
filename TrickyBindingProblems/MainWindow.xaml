@@ -4,9 +4,144 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrickyBindingProblems"
+        xmlns:enu="clr-namespace:Library.EnumDefinitions"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <ObjectDataProvider x:Key="EnumDataProvider" MethodName="GetValues"
+                        ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="enu:MyColor" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="EnumDataProvider2" MethodName="GetValues"
+                        ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="enu:MyColor" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <local:EnumConverter x:Key="enumConverter" />
+        <local:StringToColorEnumConverter x:Key="stringToColorEnumConverter" />
+    </Window.Resources>
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <DataGrid Name="Cars" Grid.Row="0" Grid.Column="1" 
+                      
+                      Margin="0"
+                      HorizontalAlignment="Left"
+                      AutoGenerateColumns="False"
+                      Background="Transparent"
+                      DataContext="{Binding}"
+                      HeadersVisibility="Column"
+                      ItemsSource="{Binding Cars}"
+                      SelectedItem="{Binding SelectedItemProperty, Mode=TwoWay}"
+                      RowBackground="Transparent"
+                      RowHeight="30">
+            <DataGrid.CellStyle>
+                <Style TargetType="{x:Type DataGridCell}">
+                    <Setter Property="Foreground" Value="Black" />
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{x:Null}" />
+                            <Setter Property="BorderBrush" Value="{x:Null}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.CellStyle>
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="FontWeight" Value="Bold" />
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Width="*" Header="Make">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock VerticalAlignment="Center"
+                                           Padding="5"
+                                           Text="{Binding Make}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Width="*" Header="MyColor (as ComboBox)">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding Source={StaticResource EnumDataProvider}}" SelectedItem="{Binding Color, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBox.Resources>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Foreground" Value="Black" />
+                                    </Style>
+                                </ComboBox.Resources>
+                            </ComboBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid Name="WeirdCars" Grid.Row="1" Grid.Column="1" 
+                      
+                      Margin="0"
+                      HorizontalAlignment="Left"
+                      AutoGenerateColumns="False"
+                      Background="Transparent"
+                      DataContext="{Binding}"
+                      HeadersVisibility="Column"
+                      ItemsSource="{Binding WeirdCars}"
+                      SelectedItem="{Binding SelectedItemProperty, Mode=TwoWay}"
+                      RowBackground="Transparent"
+                      RowHeight="30">
+            <DataGrid.CellStyle>
+                <Style TargetType="{x:Type DataGridCell}">
+                    <Setter Property="Foreground" Value="Black" />
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{x:Null}" />
+                            <Setter Property="BorderBrush" Value="{x:Null}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.CellStyle>
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="FontWeight" Value="Bold" />
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Width="*" Header="Make">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock VerticalAlignment="Center"
+                                           Padding="5"
+                                           Text="{Binding Make}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Width="*" Header="Color as String (as ComboBox)">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding Source={StaticResource EnumDataProvider2}}" SelectedItem="{Binding Color, UpdateSourceTrigger=PropertyChanged,Converter={StaticResource stringToColorEnumConverter}}">
+                                <ComboBox.Resources>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Foreground" Value="Black" />
+                                    </Style>
+                                </ComboBox.Resources>
+                                
+                            </ComboBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button Grid.Row="2" Click="Button_Click">Push Me!</Button>
     </Grid>
 </Window>
